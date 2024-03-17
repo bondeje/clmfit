@@ -4,35 +4,35 @@
 #ifdef TIMEIT
 #ifdef _WIN32
 #include <windows.h>
-LONGLONG time_start = 0;
-LONGLONG time_end = 0;
+LONGLONG time_ = 0;
 LARGE_INTEGER li = {0};
+LARGE_INTEGER clock_freq = {0};
 void mark_start(void) {
+    QueryPerformanceFrequency(&clock_freq);
     QueryPerformanceCounter(&li);
-    time_start = li.QuadPart;
+    time_ = li.QuadPart;
 }
 void mark_end(void) {
     QueryPerformanceCounter(&li);
-    time_end = li.QuadPart;
+    time_ = (LONGLONG) (li.QuadPart - time_) * 1.0e9 / clock_freq.QuadPart;
 }
 #else
 // posix
 #include <time.h>
-long long time_start = 0;
-long long time_end = 0;
+long long time_ = 0;
 struct timespec tspec = {0};
 clockid_t clk = CLOCK_MONOTONIC;
 void mark_start(void) {
     clock_gettime(clk, &tspec);
-    time_start = tspec.tv_nsec;
+    time_ = tspec.tv_nsec;
 }
 void mark_end(void) {
     clock_gettime(clk, &tspec);
-    time_end = tspec.tv_nsec;
+    time_ = tspec.tv_nsec - time_;
 }
 #endif
 long long get_execution_time(void) {
-    return (long long) (time_end - time_start);
+    return (long long) time_;
 }
 #else
 long long get_execution_time(void) {
