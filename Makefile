@@ -27,6 +27,8 @@ clean:
 	$(RM) $(OFILES) $(RM_SUFFIX)
 	$(RM) "*.exe" $(RM_SUFFIX)
 	$(RM) "*.a" $(RM_SUFFIX)
+	$(RM) "testmpfit" $(RM_SUFFIX)
+	$(RM) "testmpfit_jac" $(RM_SUFFIX)
 #	$(RM) "*.dll" $(RM_SUFFIX)
 
 mpfit.o: clmfit.c mpfit.h
