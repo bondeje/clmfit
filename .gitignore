@@ -1,0 +1,9 @@
+workbench
+*.o
+*.obj
+*.a
+*.exp
+*.exe
+*.lib
+*.dll
+*.so
