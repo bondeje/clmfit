@@ -35,7 +35,7 @@
    $Id$
 */
 
-#include "mpfit.h"
+#include "lmfit.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

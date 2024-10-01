@@ -7,3 +7,6 @@ workbench
 *.lib
 *.dll
 *.so
+.gitignore
+.vscode/
+.bash_history

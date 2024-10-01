@@ -41,7 +41,7 @@ long long get_execution_time(void) {
 #endif
 
 
-#include "mpfit.h"
+#include "lmfit.h"
 
 #define N (100)
 #define NPAR (5)

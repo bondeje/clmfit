@@ -1,44 +1,33 @@
-
+.POSIX:
+.OBJDIR: .
 CC = gcc
-OFILES = mpfit.o
-LIBFILE = libmpfit.a
-CFLAGS = -Wall -Werror -Wextra -pedantic -Wno-unused -DTIMEIT
-EXEC = 
+NAME = lmfit
+CFLAGS_COMMON = -Wall -Werror -Wextra -pedantic -Wno-unused -Wno-unused-parameter -Wno-strict-prototypes -g
+CFLAGS_DEBUG = $(CFLAGS_COMMON) -DTIMEIT 
+IFLAGS = 
+LFLAGS = -lm
 
-ifeq ($(OS), Windows_NT)
-	RM = del /s /f
-	RM_SUFFIX = 
+OBJ_FILES = $(NAME).o
 
+RM = rm -f
 
-# This is more of a shell function requirement than an OS
-else
-	RM = find . -type f -name
-	RM_SUFFIX = -delete
-	EXEC = ./
-endif
+all: $(OBJ_FILES)
 
-all: $(LIBFILE) testmpfit testmpfit_jac test
-
-test:
-	$(EXEC)testmpfit
-	$(EXEC)testmpfit_jac
+check: test$(NAME) test$(NAME)_jac
+	./test$(NAME)
+	./test$(NAME)_jac
 
 clean:
-	$(RM) $(OFILES) $(RM_SUFFIX)
-	$(RM) "*.exe" $(RM_SUFFIX)
-	$(RM) "*.a" $(RM_SUFFIX)
-	$(RM) "testmpfit" $(RM_SUFFIX)
-	$(RM) "testmpfit_jac" $(RM_SUFFIX)
-#	$(RM) "*.dll" $(RM_SUFFIX)
+	$(RM) $(NAME) *.o *.a *.so *.dll *.exe test$(NAME) test$(NAME)_jac
 
-mpfit.o: clmfit.c mpfit.h
-	$(CC) $(CFLAGS) -c -o $@ $< 
+.c.o:
+	if [ -n"$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
+	$(CC) $(IFLAGS) $(CFLAG_COMMONS) $$DBGOPT -c $< -o $@
 
-$(LIBFILE): $(OFILES)
-	$(AR) r $@ $(OFILES)
+test$(NAME): test$(NAME).o $(OBJ_FILES)
+	if [ -n"$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
+	$(CC) $(IFLAGS) $(CFLAGS_DEBUG) $$DBGOPT test$(NAME).o $(OBJ_FILES) -o $@ $(LFLAGS)
 
-testmpfit: testmpfit.c libmpfit.a
-	$(CC) $(CFLAGS) testmpfit.c -o $@ -L. -lmpfit -lm
-
-testmpfit_jac: testmpfit_jac.c libmpfit.a
-	$(CC) $(CFLAGS) testmpfit_jac.c -o $@ -L. -lmpfit -lm
+test$(NAME)_jac: test$(NAME)_jac.o $(OBJ_FILES)
+	if [ -n"$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
+	$(CC) $(IFLAGS) $(CFLAGS_DEBUG) $$DBGOPT test$(NAME)_jac.o $(OBJ_FILES) -o $@ $(LFLAGS)

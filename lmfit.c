@@ -1,15 +1,5 @@
-/*
- * This is a refactoring of the mpfit library to remove some 
- * unsavory features or Fortran-isms in the implementation. Namely
- * 
- * 1) The Jacobian matrix is in column major order as if still copied from
- *    Fortran MINPACK. It is refactored into a linear array
- * 2) minimize or (goal) eliminate dependence on <stdlib.h>
- * 3) minimize or (goal) eliminate dependence on <string.h>
- * 4) use of static internal variables/global variables minimized or (goal) eliminated
- * 5) (goal) make optional compatibility with freestanding environments
- * 6) (goal) make typing for data sizes and data types configurable
- * 
+/**
+ * See ReadMe.md for high-level description of changes
  */
 
 // original mpfit source introduction string below
@@ -35,20 +25,20 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "mpfit.h"
+#include "lmfit.h"
 
 // these were static non-const within functions...why?
 // this gives functions state unless they were intended 
 // to be constant...in which case make them const or literal
-#define one (1.0)
-#define p75 (0.75)
-#define p5 (0.5)
-#define p25 (0.25)
-#define p1 (0.1)
-#define p05 (0.05)
-#define p001 (0.001)
-#define zero (0.0)
-#define p0001 (1.0e-4)
+#define one     1.0
+#define p75     0.75
+#define p5      0.5
+#define p25     0.25
+#define p1      0.1
+#define p05     0.05
+#define p001    0.001
+#define p0001   1.0e-4
+#define zero    0.0
 
 // making a macro to avoid need for a typing
 #define mp_min0(a, b) ((a <= b) ? a : b)
