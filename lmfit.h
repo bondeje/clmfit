@@ -13,7 +13,7 @@
  */
 
 /*
- * par_index_t *:
+ * int *:
  *  ipvt, pfixed, mpside, ddebug, ifree, qulim, qllim
  *
  */
@@ -43,46 +43,9 @@
 #include <stddef.h>
 #include <float.h>
 
-#ifndef DATA_INDEX_TYPE
-#define DATA_INDEX_TYPE int
-#endif // DATA_INDEX_TYPE
-
-typedef DATA_INDEX_TYPE data_index_t;
-
-#ifndef PAR_INDEX_TYPE
-#define PAR_INDEX_TYPE DATA_INDEX_TYPE
-#endif // PAR_INDEX_TYPE
-
-typedef PAR_INDEX_TYPE par_index_t;
-
-#ifndef DATA_TYPE_MIN_SIZE
-#define DATA_TYPE_MIN_SIZE 8
-#endif // DATA_TYPE
-
-// select data type based on the minimum size requested. This is currently
-// hard-coded but can be modified based on architecture/floating type implementation
-#if DATA_TYPE_MIN_SIZE > 8
-    // TODO: should include an #error if too big for implementation
-    typedef long double data_t;
-    #define MP_MACHEP0 LDBL_EPSILON
-    #define MP_DWARF LDBL_MIN
-    #define MP_GIANT LDBL_MAX
-    #include <tgmath.h>
-    #define mp_sqrt(x) = sqrtl(x)
-#elif DATA_TYPE_MIN_SIZE > 4
-    typedef double data_t;
-    #define MP_MACHEP0 DBL_EPSILON
-    #define MP_DWARF DBL_MIN
-    #define MP_GIANT DBL_MAX
-    // requires <math.h>
-    #define mp_sqrt(x) sqrt(x)
-#else
-    typedef float data_t;
-    #define MP_MACHEP0 FLT_EPSILON
-    #define MP_DWARF FLT_MIN
-    #define MP_GIANT FLT_MAX
-    #define mp_sqrt(x) sqrtf(x)
-#endif
+#define MP_MACHEP0 DBL_EPSILON
+#define MP_DWARF DBL_MIN
+#define MP_GIANT DBL_MAX
 
 #define index_2D(arr, i, j, jmax) arr[(i) * (jmax) + j]
 
@@ -94,15 +57,15 @@ extern "C" {
 /* modification to remove padding */
 /* Definition of a parameter constraint structure */
 struct mp_par_struct {
-    data_t limits[2]; /* lower/upper limit boundary value */
-    data_t step;      /* Step size for finite difference */
-    data_t relstep;   /* Relative step size for finite difference */
-    data_t deriv_reltol; /* Relative tolerance for derivative debug
+    double limits[2]; /* lower/upper limit boundary value */
+    double step;      /* Step size for finite difference */
+    double relstep;   /* Relative step size for finite difference */
+    double deriv_reltol; /* Relative tolerance for derivative debug
                 printout */
-    data_t deriv_abstol; /* Absolute tolerance for derivative debug
+    double deriv_abstol; /* Absolute tolerance for derivative debug
                 printout */
     char *parname;    /* Name of parameter, or 0 for none */
-    par_index_t fixed;        /* 1 = fixed; 0 = free */
+    int fixed;        /* 1 = fixed; 0 = free */
     int limited[2];   /* 1 = low/upper limit; 0 = no limit */
     int side;         /* Sidedness of finite difference derivative 
                     0 - one-sided derivative computed automatically
@@ -132,12 +95,12 @@ struct mp_config_struct {
     /* NOTE: the user may set the value explicitly; OR, if the passed
         value is zero, then the "Default" value will be substituted by
         mpfit(). */
-    data_t ftol;    /* Relative chi-square convergence criterium Default: 1e-10 */
-    data_t xtol;    /* Relative parameter convergence criterium  Default: 1e-10 */
-    data_t gtol;    /* Orthogonality convergence criterium       Default: 1e-10 */
-    data_t epsfcn;  /* Finite derivative step size               Default: MP_MACHEP0 */
-    data_t stepfactor; /* Initial step bound                     Default: 100.0 */
-    data_t covtol;  /* Range tolerance for covariance calculation Default: 1e-14 */
+    double ftol;    /* Relative chi-square convergence criterium Default: 1e-10 */
+    double xtol;    /* Relative parameter convergence criterium  Default: 1e-10 */
+    double gtol;    /* Orthogonality convergence criterium       Default: 1e-10 */
+    double epsfcn;  /* Finite derivative step size               Default: MP_MACHEP0 */
+    double stepfactor; /* Initial step bound                     Default: 100.0 */
+    double covtol;  /* Range tolerance for covariance calculation Default: 1e-14 */
     int maxiter;    /* Maximum number of iterations.  If maxiter == MP_NO_ITER,
                         then basic error checking is done, and parameter
                         errors/covariances are estimated based on input
@@ -145,7 +108,7 @@ struct mp_config_struct {
                 Default: 200
             */
     #define MP_NO_ITER (-1) /* No iterations, just checking */
-    data_index_t maxfev;     /* Maximum number of function evaluations, or 0 for no limit
+    int maxfev;     /* Maximum number of function evaluations, or 0 for no limit
                 Default: 0 (no limit) */
     int nprint;     /* Default: 1 */
     int douserscale;/* Scale variables by user values?
@@ -161,21 +124,21 @@ struct mp_config_struct {
 
 /* Definition of results structure, for when fit completes */
 struct mp_result_struct {
-    data_t bestnorm;     /* Final chi^2 */
-    data_t orignorm;     /* Starting value of chi^2 */
-    data_t *resid;       /* Final residuals
+    double bestnorm;     /* Final chi^2 */
+    double orignorm;     /* Starting value of chi^2 */
+    double *resid;       /* Final residuals
                 nfunc-vector, or 0 if not desired */
-    data_t *xerror;      /* Final parameter uncertainties (1-sigma)
+    double *xerror;      /* Final parameter uncertainties (1-sigma)
                 npar-vector, or 0 if not desired */
-    data_t *covar;       /* Final parameter covariance matrix
+    double *covar;       /* Final parameter covariance matrix
                 npar x npar array, or 0 if not desired */
-    data_index_t nfunc;           /* Number of residuals (= num. of data points) */
+    int nfunc;           /* Number of residuals (= num. of data points) */
     int niter;           /* Number of iterations */
-    data_index_t nfev;            /* Number of function evaluations */
+    int nfev;            /* Number of function evaluations */
     int status;          /* Fitting status code */
-    par_index_t npar;            /* Total number of parameters */
-    par_index_t nfree;           /* Number of free parameters */
-    par_index_t npegged;         /* Number of pegged parameters */  
+    int npar;            /* Total number of parameters */
+    int nfree;           /* Number of free parameters */
+    int npegged;         /* Number of pegged parameters */  
     char version[20];    /* CLMFIT version string */
   
 };  
@@ -186,11 +149,11 @@ typedef struct mp_config_struct mp_config;
 typedef struct mp_result_struct mp_result;
 
 /* Enforce type of fitting function */
-typedef int (*mp_func)(data_index_t m, /* Number of functions (elts of fvec) */
-		       par_index_t n, /* Number of variables (elts of x) */
-		       data_t * x,      /* I - Parameters */
-		       data_t * fvec,   /* O - function values */
-		       data_t * dvec,  /* O - function derivatives (optional)*/
+typedef int (*mp_func)(int m, /* Number of functions (elts of fvec) */
+		       int n, /* Number of variables (elts of x) */
+		       double * x,      /* I - Parameters */
+		       double * fvec,   /* O - function values */
+		       double * dvec,  /* O - function derivatives (optional)*/
 		       void * private_data); /* I/O - function private data*/
 
 /* Error codes */
@@ -221,18 +184,18 @@ typedef int (*mp_func)(data_index_t m, /* Number of functions (elts of fvec) */
 
 /* External function prototype declarations */
 // extern was unnecessary here
-int mpfit(mp_func funct, data_index_t m, par_index_t npar, data_t *xall, 
+int mpfit(mp_func funct, int m, int npar, double *xall, 
           mp_par *pars, mp_config *config, void *private_data, 
           mp_result *result);
 
-int mpfit_work(mp_func funct, data_index_t m, par_index_t npar,
-		       data_t *xall, mp_par *pars, mp_config *config, 
+int mpfit_work(mp_func funct, int m, int npar, int nfree,
+		       double *xall, mp_par *pars, mp_config *config, 
 		       void *private_data, mp_result *result, 
-               par_index_t * index_work, data_t * data_work);
+               double * dbl_ws, int ndbl, int * int_ws, int nint);
 
 /* calculates the minimum sizes of workspace*/
-void mpfit_query(data_index_t m, par_index_t npar, par_index_t nfree, 
-                 size_t * n_data_t, size_t * n_data_index_t);
+void mpfit_query(int m, int npar, int nfree, 
+                 int * ndbl, int * nint);
 
 
 /* C99 uses isfinite() instead of finite() */

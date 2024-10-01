@@ -30,7 +30,7 @@ void mark_end(void) {
     clock_gettime(clk, &tspec);
     time_ = tspec.tv_nsec - time_;
 }
-#endif
+#endif // POSIX
 long long get_execution_time(void) {
     return (long long) time_;
 }
@@ -38,7 +38,7 @@ long long get_execution_time(void) {
 long long get_execution_time(void) {
     return -1;
 }
-#endif
+#endif // TIMEIT
 
 
 #include "lmfit.h"
