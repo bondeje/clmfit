@@ -2336,7 +2336,7 @@ c     **********
 */
 
 static int mp_covar(int n, double *r, int ldr, int *ipvt, double tol, double *wa) {
-    int i, ii, j, jj, k, l;
+    int i, ii, j, jj, k, l = 0;
     int kk, kj, ji, j0, k0, jj0;
     int sing, done_early = 0; // bool
     double temp, tolr;

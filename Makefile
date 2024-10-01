@@ -2,7 +2,7 @@
 .OBJDIR: .
 CC = gcc
 NAME = lmfit
-CFLAGS_COMMON = -Wall -Werror -Wextra -pedantic -Wno-unused -Wno-unused-parameter -Wno-strict-prototypes -g3
+CFLAGS_COMMON = -Wall -Werror -Wextra -pedantic -Wno-unused -Wno-unused-parameter -Wno-strict-prototypes -g3 -O2
 CFLAGS_DEBUG = $(CFLAGS_COMMON) -DTIMEIT
 IFLAGS = 
 LFLAGS = -lm

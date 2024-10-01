@@ -107,7 +107,7 @@ int linfunc(int m, int n, double *p, double *dy, double *dvec, void *vars)
 }
 
 /* Test harness routine, which contains test data, invokes mpfit() */
-int testlinfit()
+int testlinfit(void)
 {
   double x[] = {-1.7237128E+00,1.8712276E+00,-9.6608055E-01,
 		-2.8394297E-01,1.3416969E+00,1.3757038E+00,
@@ -177,7 +177,7 @@ int quadfunc(int m, int n, double *p, double *dy, double *dvec, void *vars)
 
 /* Test harness routine, which contains test quadratic data, invokes
    mpfit() */
-int testquadfit()
+int testquadfit(void)
 {
   double x[] = {-1.7237128E+00,1.8712276E+00,-9.6608055E-01,
 		-2.8394297E-01,1.3416969E+00,1.3757038E+00,
@@ -217,7 +217,7 @@ int testquadfit()
 
    Example of how to fix a parameter
 */
-int testquadfix()
+int testquadfix(void)
 {
   double x[] = {-1.7237128E+00,1.8712276E+00,-9.6608055E-01,
 		-2.8394297E-01,1.3416969E+00,1.3757038E+00,
@@ -297,7 +297,7 @@ int gaussfunc(int m, int n, double *p, double *dy, double *dvec, void *vars)
 }
 
 /* Test harness routine, which contains test gaussian-peak data */
-int testgaussfit()
+int testgaussfit(void)
 {
   double x[] = {-1.7237128E+00,1.8712276E+00,-9.6608055E-01,
 		-2.8394297E-01,1.3416969E+00,1.3757038E+00,
@@ -346,7 +346,7 @@ int testgaussfit()
 
    Commented example of how to put boundary constraints
 */
-int testgaussfix()
+int testgaussfix(void)
 {
   double x[] = {-1.7237128E+00,1.8712276E+00,-9.6608055E-01,
 		-2.8394297E-01,1.3416969E+00,1.3757038E+00,

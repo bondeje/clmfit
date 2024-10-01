@@ -14,7 +14,7 @@ void mark_start(void) {
 }
 void mark_end(void) {
     QueryPerformanceCounter(&li);
-    time_ = (LONGLONG) (li.QuadPart - time_) * 1.0e9 / clock_freq.QuadPart;
+    time_ = (LONGLONG) ((li.QuadPart - time_) * 1.0e9 / clock_freq.QuadPart);
 }
 #else
 // posix
@@ -129,7 +129,6 @@ int gaussianv_cost(int m, /* Number of functions (elts of fvec) */
 		       void * data) {
     double * x = ((struct xy *)data)->x;
     double * y = ((struct xy *)data)->y;
-    double ym = 0.0;
     if (dvec) {
         dgaussianv(m, x, pars, dvec);
     }  
