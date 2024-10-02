@@ -13,16 +13,20 @@ RM = rm -f
 
 all: $(OBJ_FILES)
 
-check: test$(NAME) test$(NAME)_jac
+check: test$(NAME) test$(NAME)_jac $(NAME)_query
 	./test$(NAME)
 	./test$(NAME)_jac
+	./$(NAME)_query 9 5 5
 
 clean:
-	$(RM) $(NAME) *.o *.a *.so *.dll *.exe test$(NAME) test$(NAME)_jac
+	$(RM) $(NAME) *.o *.so test$(NAME) test$(NAME)_jac $(NAME)_query
 
 .c.o:
 	if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
 	$(CC) $(IFLAGS) $(CFLAGS_COMMON) $$DBGOPT -c $< -o $@
+
+$(NAME)_query: $(NAME)_query.c $(OBJ_FILES)
+	$(CC) $(IFLAGS) $(CFLAGS_COMMON) $(NAME)_query.c $(OBJ_FILES) -o $@ $(LFLAGS)
 
 test$(NAME): test$(NAME).c $(OBJ_FILES)
 	if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
