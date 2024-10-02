@@ -119,21 +119,23 @@ void mpfit_query(int m, int npar, int nfree, int * ndbl, int * nint) {
   *nint = 5 * (size_t)npar + 2 * (size_t)nfree;
 } 
 
-static inline double * mpfit_alloc_data(double ** ws, int * n, int size) {
+static __inline double * mpfit_alloc_data(double ** ws, int * n, int size) {
+    double * out;
     if (size > *n) {
         return NULL;
     }
-    double * out = *ws;
+    out = *ws;
     *n -= size;
     *ws += size;
     return out;
 }
 
-static inline int * mpfit_alloc_index(int ** ws, int * n, int size) {
+static __inline int * mpfit_alloc_index(int ** ws, int * n, int size) {
+    int * out;
     if (size > *n) {
         return NULL;
     }
-    int * out = *ws;
+    out = *ws;
     *n -= size;
     *ws += size;
     return out;
@@ -1061,15 +1063,17 @@ CLEANUP:
 int mpfit(mp_func funct, int m, int npar, double *xall, 
           mp_par *pars, mp_config *config, void *private_data, 
           mp_result *result) {
+    int ndbl, nint, info, nfree, i;
+    int * int_ws;
+    double * dbl_ws;
 
-    int ndbl = 0;
-    int nint = 0;
+    ndbl = 0;
+    nint = 0;
 
     /* Finish up the free parameters */
-    int nfree;
     if (pars) {
         nfree = 0;
-        for (int i = 0; i < npar; i++) {
+        for (i = 0; i < npar; i++) {
             if (!pars[i].fixed) {
                 nfree++;
             }
@@ -1083,10 +1087,10 @@ int mpfit(mp_func funct, int m, int npar, double *xall,
 
     mpfit_query(m, npar, nfree, &ndbl, &nint);
 
-    double * dbl_ws = calloc(ndbl, sizeof(double));
-    int * int_ws = calloc(nint, sizeof(int));
+    dbl_ws = calloc(ndbl, sizeof(double));
+    int_ws = calloc(nint, sizeof(int));
   
-    int info = mpfit_work(funct, m, npar, nfree,
+    info = mpfit_work(funct, m, npar, nfree,
 		       xall, pars, config, 
 		       private_data, result, 
                dbl_ws, ndbl, int_ws, nint);
@@ -1101,8 +1105,9 @@ int mpfit(mp_func funct, int m, int npar, double *xall,
 
 // tranpose m x n matrix in linear space to n x m
 static void mp_transpose(double * arr, int m, int n) {
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
+    int i, j;
+    for (i = 0; i < m; i++) {
+        for (j = 0; j < n; j++) {
             double temp = index_2D(arr, i, j, n);
             index_2D(arr, i, j, n) = index_2D(arr, j, i, m);
             index_2D(arr, j, i, m) = temp;

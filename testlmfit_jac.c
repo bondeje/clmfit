@@ -67,12 +67,12 @@ void gaussianv(int n, double * x, double * pars, double * out) {
 }
 
 void dgaussian(double x, double * pars, double * dvec) {
-    if (!dvec) {
-        return;
-    }
     double z = (x - pars[0]) / pars[1];
     double z2 = z * z;
     double expz2 = exp(-0.5 * z2);
+    if (!dvec) {
+        return;
+    }
     dvec[0] = pars[2] * z / pars[1] * expz2;
     dvec[1] = pars[2] * z2 / pars[1] * expz2;
     dvec[2] = expz2;
@@ -147,7 +147,11 @@ int main(void) {
     double pars_in[NPAR] = {-2.0, 1.5, 2.0, 0.025, -0.3};
     double pars_guess[NPAR] = {-1.0, 1.25, 3.0, 0.005, 0.3};
     double dx = ((X_END - X_START) / (N - 1.0));
-    int i = 0;
+    int i = 0, status = 0;
+    struct xy data;
+    mp_result results = {0};
+    mp_config config = {0};
+    
     x[i] = X_START;
     gaussian(x[i], pars_in, y + i);
     for (i = 1; i < N; i++) {
@@ -155,11 +159,9 @@ int main(void) {
         gaussian(x[i], pars_in, y + i);
     }
 
-    struct xy data = {&x[0], &y[0]};
-    mp_result results = {0};
-    mp_config config = {0};
+    data.x = &x[0];
+    data.y = &y[0];
     config.maxiter = 1000;
-    int status = 0;
 
     printf("before:\n\tcenter: %f\n\twidth: %f\n\tamplitude: %f\n\tslope: %f\n\toffset: %f\n",
         pars_guess[0],
