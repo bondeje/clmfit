@@ -188,7 +188,7 @@ int mpfit(mp_func funct, int m, int npar, double *xall,
           mp_par *pars, mp_config *config, void *private_data, 
           mp_result *result);
 
-int mpfit_work(mp_func funct, int m, int npar, int nfree,
+int mpfit_w(mp_func funct, int m, int npar, int nfree,
 		       double *xall, mp_par *pars, mp_config *config, 
 		       void *private_data, mp_result *result, 
                double * dbl_ws, int ndbl, int * int_ws, int nint);

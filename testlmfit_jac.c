@@ -88,11 +88,11 @@ void dgaussianv(int n, double * x, double * pars, double * dvec) {
         double z = (x[n] - pars[0]) / pars[1];
         double z2 = z * z;
         double expz2 = exp(-0.5 * z2);
-        index_2D(dvec, n, 0, 5) = pars[2] * z / pars[1] * expz2;
-        index_2D(dvec, n, 1, 5) = pars[2] * z2 / pars[1] * expz2;
-        index_2D(dvec, n, 2, 5) = expz2;
-        index_2D(dvec, n, 3, 5) = z;
-        index_2D(dvec, n, 4, 5) = 1.0;
+        dvec[index_2D(n, 0, 5)] = pars[2] * z / pars[1] * expz2;
+        dvec[index_2D(n, 1, 5)] = pars[2] * z2 / pars[1] * expz2;
+        dvec[index_2D(n, 2, 5)] = expz2;
+        dvec[index_2D(n, 3, 5)] = z;
+        dvec[index_2D(n, 4, 5)] = 1.0;
     }
 }
 

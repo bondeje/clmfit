@@ -141,7 +141,7 @@ static __inline int * mpfit_alloc_index(int ** ws, int * n, int size) {
     return out;
 }
 
-int mpfit_work(mp_func funct, int m, int npar, int nfree,
+int mpfit_w(mp_func funct, int m, int npar, int nfree,
 		       double *xall, mp_par *pars, mp_config *config, 
 		       void *private_data, mp_result *result, 
                double * dbl_ws, int ndbl, int * int_ws, int nint) {
@@ -1090,7 +1090,7 @@ int mpfit(mp_func funct, int m, int npar, double *xall,
     dbl_ws = calloc(ndbl, sizeof(double));
     int_ws = calloc(nint, sizeof(int));
   
-    info = mpfit_work(funct, m, npar, nfree,
+    info = mpfit_w(funct, m, npar, nfree,
 		       xall, pars, config, 
 		       private_data, result, 
                dbl_ws, ndbl, int_ws, nint);

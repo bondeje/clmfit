@@ -22,16 +22,17 @@ clean:
 	$(RM) $(NAME) *.o *.so test$(NAME) test$(NAME)_jac $(NAME)_query
 
 .c.o:
-	if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
+	@if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
 	$(CC) $(IFLAGS) $(CFLAGS_COMMON) $$DBGOPT -c $< -o $@
 
 $(NAME)_query: $(NAME)_query.c $(OBJ_FILES)
-	$(CC) $(IFLAGS) $(CFLAGS_COMMON) $(NAME)_query.c $(OBJ_FILES) -o $@ $(LFLAGS)
+	@if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
+	$(CC) $(IFLAGS) $(CFLAGS_COMMON) $$DBGOPT $(NAME)_query.c $(OBJ_FILES) -o $@ $(LFLAGS)
 
 test$(NAME): test$(NAME).c $(OBJ_FILES)
-	if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
+	@if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
 	$(CC) $(IFLAGS) $(CFLAGS_DEBUG) $$DBGOPT test$(NAME).c $(OBJ_FILES) -o $@ $(LFLAGS)
 
 test$(NAME)_jac: test$(NAME)_jac.c $(OBJ_FILES)
-	if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
+	@if [ -n "$(SANITIZE)" ] ; then export DBGOPT="-fsanitize=address,undefined"; else export DBGOPT="" ; fi ; \
 	$(CC) $(IFLAGS) $(CFLAGS_DEBUG) $$DBGOPT test$(NAME)_jac.c $(OBJ_FILES) -o $@ $(LFLAGS)
