@@ -1108,9 +1108,9 @@ static void mp_transpose(double * arr, int m, int n) {
     int i, j;
     for (i = 0; i < m; i++) {
         for (j = 0; j < n; j++) {
-            double temp = index_2D(arr, i, j, n);
-            index_2D(arr, i, j, n) = index_2D(arr, j, i, m);
-            index_2D(arr, j, i, m) = temp;
+            double temp = arr[index_2D(i, j, n)];
+            arr[index_2D(i, j, n)] = arr[index_2D(j, i, m)];
+            arr[index_2D(j, i, m)] = temp;
         }
     }
 }

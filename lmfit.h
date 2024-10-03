@@ -47,7 +47,7 @@
 #define MP_DWARF DBL_MIN
 #define MP_GIANT DBL_MAX
 
-#define index_2D(arr, i, j, jmax) arr[(i) * (jmax) + j]
+#define index_2D(i, j, jmax) ((i) * (jmax) + j)
 
 /* This is a C library.  Allow compilation with a C++ compiler */
 #ifdef __cplusplus
