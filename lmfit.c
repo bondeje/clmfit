@@ -115,16 +115,20 @@ void mpfit_query(int m, int npar, int nfree, int * ndbl, int * nint) {
   wa4: m
 
   */
-  *ndbl = 8 * (size_t)npar + 4 * (size_t)nfree + ((size_t) nfree + 3) * (size_t)m;
+  *ndbl = 8 * (size_t)npar + 4 * (size_t)nfree + ((size_t) nfree * 2 + 3) * (size_t)m;
   *nint = 5 * (size_t)npar + 2 * (size_t)nfree;
 } 
 
 static __inline double * mpfit_alloc_data(double ** ws, int * n, int size) {
     double * out;
+    int i;
     if (size > *n) {
         return NULL;
     }
     out = *ws;
+    for (i = 0; i < size; i++) {
+        out[i] = 0.0;
+    }
     *n -= size;
     *ws += size;
     return out;
@@ -132,10 +136,14 @@ static __inline double * mpfit_alloc_data(double ** ws, int * n, int size) {
 
 static __inline int * mpfit_alloc_index(int ** ws, int * n, int size) {
     int * out;
+    int i;
     if (size > *n) {
         return NULL;
     }
     out = *ws;
+    for (i = 0; i < size; i++) {
+        out[i] = 0;
+    }
     *n -= size;
     *ws += size;
     return out;
@@ -306,7 +314,7 @@ int mpfit_w(mp_func funct, int m, int npar, int nfree,
     ldfjac = m;
     diag = mpfit_alloc_data(&dbl_ws, &ndbl, npar);
     wa1 = mpfit_alloc_data(&dbl_ws, &ndbl, npar);
-    wa2 = mpfit_alloc_data(&dbl_ws, &ndbl, m); /* Maximum usage is "m" in mpfit_fdjac2() */
+    wa2 = mpfit_alloc_data(&dbl_ws, &ndbl, m + m * nfree); /* Maximum usage is "m" in mpfit_fdjac2() */
     wa3 = mpfit_alloc_data(&dbl_ws, &ndbl, npar);
     wa4 = mpfit_alloc_data(&dbl_ws, &ndbl, m);
     ipvt = mpfit_alloc_index(&int_ws, &nint, npar);
@@ -1104,13 +1112,16 @@ int mpfit(mp_func funct, int m, int npar, double *xall,
 /************************fdjac2.c*************************/
 
 // tranpose m x n matrix in linear space to n x m
-static void mp_transpose(double * arr, int m, int n) {
+static void mp_transpose(int m, int n, double * arr, double * ws) {
     int i, j;
     for (i = 0; i < m; i++) {
         for (j = 0; j < n; j++) {
-            double temp = arr[index_2D(i, j, n)];
-            arr[index_2D(i, j, n)] = arr[index_2D(j, i, m)];
-            arr[index_2D(j, i, m)] = temp;
+            ws[index_2D(j, i, m)] = arr[index_2D(i, j, n)];
+        }
+    }
+    for (j = 0; j < n; j++) {
+        for (i = 0; i < m; i++) {
+            arr[index_2D(j, i, m)] = ws[index_2D(j, i, m)];
         }
     }
 }
@@ -1243,7 +1254,7 @@ static int mp_fdjac2(mp_func funct, int m, int n,
         //iflag = mp_call(funct, m, npar, x, wa, dvec, priv);
         iflag = mp_call(funct, m, n, x, wa, fjac, priv);
         // transpose fjac
-        mp_transpose(fjac, m, n);
+        mp_transpose(m, n, fjac, wa2 + m);
         if (nfev) {
             *nfev = *nfev + 1;
         }
